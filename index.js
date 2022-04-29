@@ -1,15 +1,15 @@
+import admin from "firebase-admin"; // imports lib from npm install
 
-
-
-const admin = require("firebase-admin");
-
-const serviceAccount = require("./credentials.json");
+import serviceAccount  from './credentials.js' //import creds assign to variable    
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount) //create cert from creds
 });
 
-const db = admin.firestore();
+const db = admin.firestore(); 
+
+const resCol = db.collection('restaurants')
+
 
 
 const restaurant = {
@@ -19,9 +19,9 @@ const restaurant = {
     rating: 4.9,
     phone: '(786) 677-2903'
 }
-// db.collection('restaurants').add(restaurant)
-// .then(doc => console.log('Data Added! ', doc.id))
-// .catch(err => console.error(err))
+resCol.add(restaurant)
+.then(doc => console.log('Data Added! ', doc.id))
+.catch(err => console.error(err))
 
 const restaurant2 = {
     name: 'Bolay',
@@ -39,4 +39,12 @@ async function addData(data){
 }
 }
 
-addData(restaurant2);
+
+resCol.where('cuisine', '==', 'pizza').get()
+.then(snapshot =>  {
+    snapshot.docs.forEach(doc =>{ //.docs is prop of snapshot object
+        console.log(doc.data())
+    })
+    
+})  
+.catch(err => console.error(err))
